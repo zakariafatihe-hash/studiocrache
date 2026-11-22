@@ -1,6 +1,212 @@
-// StudioCrache Main JavaScript
+// StudioCrache Main JavaScript - With Shopping Cart
 
-// Sample Products Data - Using placeholder images (replace with real images later)
+// Initialize i18n
+const i18nScript = document.createElement('script');
+i18nScript.src = 'js/i18n.js';
+i18nScript.defer = true;
+document.head.appendChild(i18nScript);
+
+// Wait for i18n to load
+let i18n;
+let cart = []; // Shopping cart array
+let currentProduct = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.i18n) {
+        i18n = window.i18n;
+    } else {
+        i18n = {
+            t: (key, params = {}) => key,
+            setLanguage: () => {},
+            applyTranslations: () => {},
+            getCurrentLanguage: () => 'en'
+        };
+    }
+
+    // Initialize cart from sessionStorage or create empty cart
+    const savedCart = sessionStorage.getItem('cart');
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+    } else {
+        sessionStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    // Load products and apply translations
+    initApp();
+});
+
+// Initialize application
+function initApp() {
+    applyInitialTranslations();
+    loadProducts();
+    setupEventListeners();
+    updateCartCount();
+    setupCartDropdown();
+}
+
+// Initialize theme from localStorage
+function initThemeFromLocalStorage() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+}
+
+// Shopping Cart Functions
+// Add product to cart
+function addToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    if (product) {
+        // Check if product already in cart
+        const existingIndex = cart.findIndex(p => p.id === productId);
+        if (existingIndex >= 0) {
+            cart[existingIndex].quantity++;
+        } else {
+            cart.push({
+                id: product.id,
+                title: product.title,
+                price: product.price,
+                quantity: 1,
+                description: product.description
+            });
+        }
+        // Save to sessionStorage
+        sessionStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        showToast(`${i18n ? i18n.t('msg.added_to_cart') : 'Added to cart'}!`);
+    }
+}
+
+// Remove product from cart
+function removeFromCart(productId) {
+    cart = cart.filter(p => p.id !== productId);
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    renderCartSidebar();
+    showToast('Removed from cart');
+}
+
+// Update cart count in UI
+function updateCartCount() {
+    const cartCount = document.querySelectorAll('.cart-count');
+    cartCount.forEach(el => {
+        el.textContent = cart.length;
+    });
+}
+
+// Render cart sidebar
+function renderCartSidebar() {
+    const cartSidebar = document.getElementById('cart-sidebar');
+    if (!cartSidebar) return;
+
+    if (cart.length === 0) {
+        cartSidebar.innerHTML = `
+            <div class="empty-cart">
+                ${i18n ? i18n.t('cart.empty') : 'Your cart is empty'}
+                <button class="btn btn-secondary" onclick="clearCart()">${i18n ? i18n.t('cart.continue_shopping') : 'Continue Shopping'}</button>
+            </div>
+        `;
+        return;
+    }
+
+    let total = 0;
+    let html = `<ul class="cart-items">`;
+
+    cart.forEach(item => {
+        total += item.price * item.quantity;
+        html += `
+            <li class="cart-item">
+                <span class="cart-item-name">${item.title}</span>
+                <span class="cart-item-price">$${item.price.toFixed(2)}</span>
+                <span class="cart-item-quantity">
+                   Qty: <input type="number" min="1" value="${item.quantity}" onchange="updateCartQuantity(${item.id}, this.value)" disabled>
+                </span>
+                <button class="btn btn-danger btn-small" onclick="removeFromCart(${item.id})">${i18n ? i18n.t('cart.remove') : 'Remove'}</button>
+            </li>
+        `;
+    });
+
+    html += `</ul>`;
+    html += `<div class="cart-footer">
+        <span>${i18n ? i18n.t('cart.total') : 'Total'}:</span>
+        <strong>$${total.toFixed(2)}</strong>
+        <button class="btn btn-primary btn-block" onclick="proceedToCheckout()">${i18n ? i18n.t('cart.checkout') : 'Proceed to Checkout'}</button>
+    </div>`;
+
+    cartSidebar.innerHTML = html;
+}
+
+// Update cart quantity
+function updateCartQuantity(productId, newQuantity) {
+    const item = cart.find(p => p.id === productId);
+    if (item) {
+        item.quantity = parseInt(newQuantity);
+        sessionStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        renderCartSidebar();
+    }
+}
+
+// Clear entire cart
+function clearCart() {
+    cart = [];
+    sessionStorage.removeItem('cart');
+    updateCartCount();
+    renderCartSidebar();
+    showToast('Cart cleared');
+}
+
+// Proceed to checkout with cart
+function proceedToCheckout() {
+    if (cart.length === 0) {
+        alert('Your cart is empty');
+        return;
+    }
+
+    // Store cart in session for checkout
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+    // Redirect to checkout page
+    window.location.href = 'checkout/payment.html';
+}
+
+// Show toast notification
+function showToast(message) {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--primary);
+        color: white;
+        padding: 12px 20px;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        animation: slide-in 0.3s ease;
+    `;
+
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slide-in {
+            from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+            to { transform: translateX(-50%); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    document.body.appendChild(toast);
+
+    // Remove toast after 3 seconds
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Product Data
 const products = [
     {
         id: 1,
@@ -83,14 +289,44 @@ const viewDemo = document.getElementById('viewDemo');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.i18n) {
+        i18n = window.i18n;
+    } else {
+        i18n = {
+            t: (key, params = {}) => key,
+            setLanguage: () => {},
+            applyTranslations: () => {},
+            getCurrentLanguage: () => 'en'
+        };
+    }
+
+    applyInitialTranslations();
     loadProducts();
     setupThemeToggle();
     setupEventListeners();
+    updateCartCount();
 
     // Set current year in footer
     document.querySelector('.footer-bottom p').innerHTML =
         `&copy; ${new Date().getFullYear()} StudioCrache. All rights reserved.`;
 });
+
+// Apply translations that are already in the DOM
+function applyInitialTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n && i18n.t) {
+            el.textContent = i18n.t(key);
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (i18n && i18n.t) {
+            el.placeholder = i18n.t(key);
+        }
+    });
+}
 
 // Load Products
 function loadProducts() {
@@ -105,14 +341,14 @@ function loadProducts() {
     productsGrid.appendChild(container);
 }
 
-// Create Product Card
+// Create Product Card with Add to Cart button
 function createProductCard(product) {
     const card = document.createElement('div');
     card.className = 'product-card';
     card.setAttribute('data-category', product.category.toLowerCase());
 
     card.innerHTML = `
-        <img src="${product.image}" alt="${product.title}" class="product-img" onerror="this.src='assets/img/placeholder.png'">
+        <img src="${product.image}" alt="${product.title}" class="product-img" onerror="this.src='https://via.placeholder.com/720x400/cccccc/ffffff?text=Product+Placeholder'">
         <div class="product-info">
             <h3 class="product-title">${product.title}</h3>
             <p class="product-desc">${product.description}</p>
@@ -122,7 +358,7 @@ function createProductCard(product) {
             </div>
             <div class="product-price">$${product.price.toFixed(2)}</div>
             <div class="product-actions">
-                <button onclick="buyProduct(${product.id})">Buy Now</button>
+                <button onclick="addToCart(${product.id})" class="btn btn-primary">${i18n ? i18n.t('products.buy') : 'Add to Cart'}</button>
             </div>
         </div>
     `;
@@ -159,17 +395,22 @@ function setupEventListeners() {
     viewDemo.addEventListener('click', () => {
         alert('Demo feature coming soon!');
     });
-}
 
-// Buy Product Function
-function buyProduct(productId) {
-    const product = products.find(p => p.id === productId);
-    if (product) {
-        // Store selected product in session storage for checkout
-        sessionStorage.setItem('selectedProduct', JSON.stringify(product));
-        window.location.href = 'checkout/payment.html';
+    // Add cart toggle for mobile
+    const cartToggle = document.querySelector('.cart-toggle');
+    if (cartToggle) {
+        cartToggle.addEventListener('click', () => {
+            const cartSidebar = document.getElementById('cart-sidebar');
+            if (cartSidebar) {
+                cartSidebar.classList.toggle('active');
+            }
+        });
     }
 }
 
 // Export for global access
-window.buyProduct = buyProduct;
+window.addToCart = addToCart;
+window.removeFromCart = removeFromCart;
+window.clearCart = clearCart;
+window.proceedToCheckout = proceedToCheckout;
+document.addEventListener('DOMContentLoaded', initApp);

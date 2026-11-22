@@ -3,24 +3,20 @@
 
 const translations = {
     en: {
-        // General
         "site.title": "StudioCrache - Digital Assets Marketplace",
         "site.tagline": "Professional Digital Assets",
 
-        // Navigation
         "nav.products": "Products",
         "nav.about": "About",
         "nav.contact": "Contact",
         "nav.login": "Login",
         "nav.register": "Register",
 
-        // Hero
         "hero.title": "Professional Digital Assets",
         "hero.subtitle": "Download ready-to-use templates, scripts, and tools for your projects",
         "hero.shop": "Shop Now",
         "hero.demo": "View Demo",
 
-        // Products
         "products.title": "Featured Products",
         "products.subtitle": "High-quality digital assets created by experts",
         "products.buy": "Buy Now",
@@ -28,7 +24,6 @@ const translations = {
         "products.rating": "Rating",
         "products.category": "Category",
 
-        // Features
         "features.secure": "Secure Checkout",
         "features.secure_desc": "256-bit SSL encryption for all transactions",
         "features.instant": "Instant Delivery",
@@ -36,7 +31,6 @@ const translations = {
         "features.global": "Global Payments",
         "features.global_desc": "PayPal, Cards, Apple Pay, Google Pay accepted",
 
-        // Checkout
         "checkout.title": "Secure Checkout",
         "checkout.step1": "1. Cart",
         "checkout.step2": "2. Payment",
@@ -53,20 +47,17 @@ const translations = {
         "checkout.download_info": "Your download link will be sent to your email within 5 minutes.",
         "checkout.continue_shopping": "Continue Shopping",
 
-        // Footer
         "footer.brand": "Professional digital assets marketplace",
         "footer.links": "Quick Links",
         "footer.payment": "We Accept",
         "footer.copyright": "All rights reserved.",
 
-        // Product Details
         "product.files_included": "Files Included",
         "product.description": "Description",
         "product.features": "Features",
         "product.requirements": "Requirements",
         "product.changelog": "Changelog",
 
-        // Messages
         "msg.added_to_cart": "Added to cart!",
         "msg.payment_processing": "Processing payment...",
         "msg.payment_success": "Payment successful!",

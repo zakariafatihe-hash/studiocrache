@@ -4,8 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudioCrache - Digital Assets Marketplace</title>
+    <meta name="description" content="StudioCrache - Professional Digital Assets Marketplace. Download templates, scripts, and tools for your projects.">
+    <meta name="keywords" content="digital assets, templates, scripts, graphics, guides, tools, marketplace, StudioCrache">
+    <meta name="author" content="StudioCrache">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="assets/img/favicon.png" type="image/png">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="StudioCrache - Digital Assets Marketplace">
+    <meta property="og:description" content="StudioCrache - Professional Digital Assets Marketplace. Download templates, scripts, and tools for your projects.">
+    <meta property="og:url" content="https://studiocrashe.com">
+    <meta property="og:site_name" content="StudioCrache">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="StudioCrache - Digital Assets Marketplace">
+    <meta property="twitter:description" content="StudioCrache - Professional Digital Assets Marketplace">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Website",
+        "name": "StudioCrache",
+        "description": "Professional Digital Assets Marketplace",
+        "url": "https://studiocrashe.com",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://studiocrashe.com/search?q={search_term_string}",
+            "query": "required {search_term_string}"
+        }
+    }
+    </script>
 </head>
 <body>
     <!-- Header -->
@@ -19,7 +51,13 @@
             </nav>
             <div class="header-actions">
                 <button class="theme-toggle" id="themeToggle">🌙</button>
-                <a href="checkout/payment.html" class="btn btn-outline">Checkout</a>
+                <!-- Cart Toggle -->
+                <a href="#" class="btn btn-outline cart-toggle" id="cartToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 14c0 1-1 2-2 2H7c-1 0-2-1-2-2V5c0-1 1-2 2-2h12c1 0 2 1 2 2v9zm-3-5v2H14V9h2zM4 9h2V5H4v4zm5 5h2v2h2v-2h-2v-2h-2v2zm2-7c-2.76 0-5 2.24-5 5h2c0-2.76 2.24-5 5-5h4c2.76 0 5 2.24 5 5h2c0-2.76 2.24-5 5-5h-3zm6.63 9.21l-1.58-1.58C20.67 15.05 19.26 16 16 16c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7z"/>
+                    </svg>
+                    <span class="cart-count">0</span>
+                </a>
             </div>
         </div>
     </header>
@@ -78,7 +116,56 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Cart Sidebar (Mobile) -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-sidebar-header">
+            <span class="cart-sidebar-title">${i18n ? i18n.t('cart.title') : 'My Cart'}</span>
+            <button class="btn btn-secondary btn-sm cart-close" onclick="toggleCart()">${i18n ? i18n.t('cart.close') : 'Close'}</button>
+        </div>
+        <div class="cart-items-container" id="cartItems">
+            <!-- Cart items will be loaded here -->
+        </div>
+        <div class="cart-footer">
+            <span>${i18n ? i18n.t('cart.total') : 'Total'}:</span>
+            <strong id="cartTotal">$0.00</strong>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <section id="products" class="section">
+        <div class="container">
+            <h2 class="section-title">Featured Products</h2>
+            <p class="section-subtitle">High-quality digital assets created by experts</p>
+
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section bg-light">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure Checkout</h3>
+                    <p>256-bit SSL encryption for all transactions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Delivery</h3>
+                    <p>Get your files immediately after payment</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Global Payments</h3>
+                    <p>Stripe, PayPal, Apple Pay, Google Pay accepted</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer class="footer">
         <div class="container">
             <div class="footer-content">

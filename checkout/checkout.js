@@ -2,6 +2,22 @@
 
 let selectedProduct = null;
 let currentTheme = localStorage.getItem('theme') || 'light';
+let i18n;
+
+// Load i18n
+if (window.i18n) {
+    i18n = window.i18n;
+} else {
+    // Fallback i18n object
+    i18n = {
+        t: (key, params = {}) => key,
+        translateElement: (el, key) => {
+            if (el.dataset.i18n) {
+                el.textContent = i18n.t(key);
+            }
+        }
+    };
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     // Load selected product from session storage
@@ -13,6 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // No product selected, redirect to products
         window.location.href = '../index.html';
     }
+
+    // Apply translations
+    applyTranslations();
 
     setupEventListeners();
     applyTheme();
@@ -32,15 +51,16 @@ function renderCart() {
 
         cartItem.innerHTML = `
             <div class="cart-product">
-                <h3>${selectedProduct.title}</h3>
-                <p class="cart-desc">${selectedProduct.description}</p>
-                <span class="cart-price">$${selectedProduct.price.toFixed(2)}</span>
+                <h3>${i18n ? i18n.t('product.files_included') : 'Files Included'}</h3>
+                <p class="cart-desc">${selectedProduct.title}</p>
+                <span class="cart-price">${i18n ? i18n.t('product.description') : 'Description'}: ${selectedProduct.description}</span>
+                <span class="cart-price">${selectedProduct.price.toFixed(2)}</span>
             </div>
         `;
 
-        subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-        taxEl.textContent = `$${tax.toFixed(2)}`;
-        totalEl.textContent = `$${total.toFixed(2)}`;
+        subtotalEl.textContent = `${i18n ? i18n.t('checkout.subtotal') : 'Subtotal'} $${subtotal.toFixed(2)}`;
+        taxEl.textContent = `${i18n ? i18n.t('checkout.tax') : 'Tax'} $${tax.toFixed(2)}`;
+        totalEl.textContent = `${i18n ? i18n.t('checkout.total') : 'Total'} $${total.toFixed(2)}`;
     }
 }
 
@@ -50,7 +70,7 @@ function processPayment() {
     const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
 
     if (!email) {
-        alert('Please enter your email address');
+        alert(`${i18n ? i18n.t('msg.email_required') : 'Email is required'}`);
         return;
     }
 
@@ -65,15 +85,14 @@ function showConfirmation(email, paymentMethod) {
     cartItem.innerHTML = `
         <div class="confirmation-content">
             <div class="checkmark">✓</div>
-            <h2>Thank You!</h2>
-            <p>Your order has been placed successfully.</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Payment Method:</strong> ${paymentMethod === 'stripe' ? 'Stripe Card' : 'PayPal'}</p>
+            <h2>${i18n ? i18n.t('checkout.success_title') : 'Thank You!'}</h2>
+            <p>${i18n ? i18n.t('checkout.success_desc') : 'Your order has been placed successfully.'}</p>
+            <p><strong>${i18n ? i18n.t('checkout.email') : 'Email':}</strong> ${email}</p>
+            <p><strong>${i18n ? i18n.t('checkout.payment_method') : 'Payment Method':}</strong> ${paymentMethod === 'paypal' ? 'PayPal' : 'Stripe Card'}</p>
             <p class="download-info">
-                Your download link will be sent to your email within 5 minutes.<br>
-                You can also access your purchases in your account dashboard.
+                ${i18n ? i18n.t('checkout.download_info') : 'Your download link will be sent to your email within 5 minutes.'}
             </p>
-            <a href="../index.html" class="btn btn-primary">Continue Shopping</a>
+            <a href="../index.html" class="btn btn-primary">${i18n ? i18n.t('checkout.continue_shopping') : 'Continue Shopping'}</a>
         </div>
     `;
 
@@ -82,7 +101,7 @@ function showConfirmation(email, paymentMethod) {
 
     // Send download link (simulated)
     setTimeout(() => {
-        console.log(`Download link sent to ${email}`);
+        console.log(`${i18n ? i18n.t('msg.payment_success') : 'Payment successful!'}: ${email}`);
         // In production: Integrate with Stripe/PayPal webhooks
         // to send actual download emails
     }, 1000);
@@ -100,7 +119,7 @@ function applyTheme() {
     }
 }
 
-// Clear cart after purchase
+// Export for global access
 window.clearCart = function() {
     sessionStorage.removeItem('selectedProduct');
 };

@@ -29,21 +29,21 @@
                 <div class="checkout-content">
                     <!-- Cart Summary -->
                     <div class="cart-summary" id="cartSummary">
-                        <h2>Your Cart</h2>
+                        <h2 data-i18n-title>Your Cart</h2>
                         <div class="cart-item" id="cartItem">
                             <!-- Loaded dynamically -->
                         </div>
                         <div class="cart-total">
                             <div class="total-row">
-                                <span>Subtotal:</span>
+                                <span data-i18n-subtitle>Subtotal:</span>
                                 <span id="subtotal">$0.00</span>
                             </div>
                             <div class="total-row">
-                                <span>Tax:</span>
+                                <span data-i18n-tax>Tax:</span>
                                 <span id="tax">$0.00</span>
                             </div>
                             <div class="total-row grand-total">
-                                <span>Total:</span>
+                                <span data-i18n-total>Total:</span>
                                 <span id="total">$0.00</span>
                             </div>
                         </div>
@@ -52,24 +52,24 @@
                     <!-- Payment Form -->
                     <div class="payment-form-container">
                         <div class="payment-form">
-                            <h2>Payment Method</h2>
+                            <h2 data-i18n-title2>Payment Method</h2>
                             <div class="payment-options">
                                 <label class="payment-option">
-                                    <input type="radio" name="payment" value="stripe" checked>
-                                    <span>Stripe <img src="../assets/img/card-logos.png" alt="Cards"></span>
+                                    <input type="radio" name="payment" value="paypal" checked data-i18n-paypal>
+                                    <span>PayPal <img src="../assets/img/paypal.png" alt="PayPal" height="24"></span>
                                 </label>
                                 <label class="payment-option">
-                                    <input type="radio" name="payment" value="paypal">
-                                    <span>PayPal</span>
+                                    <input type="radio" name="payment" value="stripe" data-i18n-stripe>
+                                    <span>Stripe Card</span>
                                 </label>
                             </div>
 
                             <div class="form-group">
-                                <label for="email">Email Address *</label>
+                                <label for="email" data-i18n-email>Email Address *</label>
                                 <input type="email" id="email" required>
                             </div>
 
-                            <button class="btn btn-primary pay-button" id="payButton">
+                            <button class="btn btn-primary pay-button" id="payButton" data-i18n-pay>
                                 Complete Payment
                             </button>
                         </div>
